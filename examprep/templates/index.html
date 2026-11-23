@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="hero">
+  <h1>{{ cfg.BRAND_NAME }}</h1>
+  {% for slug, p in packs.items() %}
+    <p><a class="btn" href="{{ url_for('landing', slug=slug) }}">{{ p.title }}</a></p>
+  {% else %}
+    <p>No exam packs are loaded. Add a JSON pack to the content folder.</p>
+  {% endfor %}
+</section>
+{% endblock %}

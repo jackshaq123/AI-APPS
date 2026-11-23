@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ t('flashcards') }} · {{ pack.title }}{% endblock %}
+{% block body %}
+{% include "_paidnav.html" %}
+<section id="cards" data-slug="{{ pack.slug }}">
+  {% set ns = namespace(section=None) %}
+  {% for q in questions %}
+    {% if q.section != ns.section %}<h2 class="section">{{ q.section }}</h2>{% set ns.section = q.section %}{% endif %}
+    <article class="flash" data-qid="{{ q.id }}">
+      <p class="q">{{ loop.index }}. {{ q.q }}{% if q.star %} <span class="star" title="65/20">★</span>{% endif %}</p>
+      <div class="a" hidden>
+        <ul>{% for a in q.answers %}<li>{{ a }}</li>{% endfor %}</ul>
+        {% if q.changes %}<p class="note">{{ t('change_note') }}</p>{% endif %}
+        {% if q.note %}<p class="note">{{ q.note }}</p>{% endif %}
+        <div class="row">
+          <button class="btn small" data-mark="1">{{ t('got_it') }}</button>
+          <button class="btn small ghost" data-mark="0">{{ t('missed_it') }}</button>
+        </div>
+      </div>
+      <button class="btn small ghost" data-reveal>{{ t('show_answer') }}</button>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

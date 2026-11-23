@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="hero">
+  <h1>{{ t('welcome_paid') }}</h1>
+  <a class="btn" href="{{ url_for('study', slug=pack.slug) }}">{{ t('study') }}</a>
+</section>
+{% endblock %}
+{% block scripts %}
+{% if cfg.META_PIXEL_ID %}
+<script>
+fbq('track', 'Purchase', {value: {{ purchase_value }}, currency: {{ purchase_currency|tojson }}, content_name: {{ pack.slug|tojson }}}, {eventID: {{ event_id|tojson }}});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card narrow">
+  <h1>{{ t('account') }}</h1>
+  <p class="quiet">{{ user.email }}</p>
+  {% for o in owned %}
+    <p><a class="btn" href="{{ url_for('study', slug=o.exam_slug) }}">{{ packs[o.exam_slug].title }}</a></p>
+  {% else %}
+    {% for slug, p in packs.items() %}
+      <p><a href="{{ url_for('landing', slug=slug) }}">{{ p.title }}</a></p>
+    {% endfor %}
+  {% endfor %}
+</section>
+{% endblock %}

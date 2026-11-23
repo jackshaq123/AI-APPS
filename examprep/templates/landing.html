@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% set L = pack.landing[lang] if pack.landing and pack.landing[lang] else pack.landing.en %}
+{% block title %}{{ L.headline }} · {{ cfg.BRAND_NAME }}{% endblock %}
+{% block description %}{{ L.subhead }}{% endblock %}
+{% block body %}
+<section class="hero">
+  <h1>{{ L.headline }}</h1>
+  <p class="sub">{{ L.subhead }}</p>
+  {% if owned %}
+    <a class="btn" href="{{ url_for('study', slug=pack.slug) }}">{{ t('study') }}</a>
+  {% else %}
+    <a class="btn" href="{{ url_for('free_quiz', slug=pack.slug) }}">{{ t('start_free') }}</a>
+    <p class="quiet">{{ t('free_note', n=pack.free_count) }}</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>{{ t('how_it_works') }}</h2>
+  <ol class="steps">
+    <li>{{ t('step1', n=pack.free_count) }}</li>
+    <li>{{ t('step2') }}</li>
+    <li>{{ t('step3') }}</li>
+  </ol>
+</section>
+
+<section id="pricing" class="card">
+  <h2>{{ t('whats_inside') }}</h2>
+  <ul class="checks">
+    <li>{{ t('inside_all', n=pack.questions|length) }}</li>
+    <li>{{ t('inside_mock', size=pack.mock.size, pass_mark=pack.mock.pass_mark) }}</li>
+    <li>{{ t('inside_weak') }}</li>
+    {% if pack.mock_65_20 %}<li>{{ t('inside_65') }}</li>{% endif %}
+    {% if 'es' in pack.languages %}<li>{{ t('inside_lang') }}</li>{% endif %}
+  </ul>
+  <p class="price">{{ t('price_line', price=price) }}</p>
+  <p class="quiet">{{ t('refund_line', days=pack.refund_days or 30) }}</p>
+  {% if not owned %}
+  <form method="post" action="{{ url_for('checkout', slug=pack.slug) }}" data-checkout>
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <button class="btn">{{ t('unlock', price=price) }}</button>
+  </form>
+  {% endif %}
+</section>
+
+{% if L.faq %}
+<section>
+  {% for item in L.faq %}
+  <details><summary>{{ item.q }}</summary><p>{{ item.a }}</p></details>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,275 @@
+{
+ "slug": "us-citizenship-2025",
+ "title": "U.S. Citizenship Civics Test",
+ "title_es": "Examen de educación cívica para la ciudadanía",
+ "demo": true,
+ "source_note": "DEMO: replace with the official USCIS 2025 civics questions using scripts/import_uscis_pdf.py. Check mock sizes against the USCIS test rules before launch.",
+ "price_cents": 2900,
+ "currency": "usd",
+ "refund_days": 30,
+ "free_count": 10,
+ "languages": [
+  "en",
+  "es"
+ ],
+ "mock": {
+  "size": 20,
+  "pass_mark": 12
+ },
+ "mock_65_20": {
+  "size": 10,
+  "pass_mark": 6
+ },
+ "landing": {
+  "en": {
+   "headline": "Pass your U.S. citizenship civics test the first time.",
+   "subhead": "Practice the real questions in English or Spanish, take mock tests in the real format, and drill the ones you keep missing.",
+   "faq": [
+    {
+     "q": "Is this the official test?",
+     "a": "No. We are a private study service. The official question list is free from USCIS. We turn it into practice tests, flashcards and a review list so you study less and remember more."
+    },
+    {
+     "q": "Is it a subscription?",
+     "a": "No. You pay once and keep access. Nothing renews."
+    },
+    {
+     "q": "Can I study in Spanish?",
+     "a": "Yes. Every question and answer is in English and Spanish. Your interview is in English, so practice both."
+    }
+   ]
+  },
+  "es": {
+   "headline": "Aprueba tu examen de educación cívica para la ciudadanía a la primera.",
+   "subhead": "Practica las preguntas reales en inglés o en español, haz exámenes de práctica en el formato real y repasa las que sigues fallando.",
+   "faq": [
+    {
+     "q": "¿Es el examen oficial?",
+     "a": "No. Somos un servicio privado de estudio. La lista oficial de preguntas es gratis en USCIS. La convertimos en exámenes de práctica, tarjetas y una lista de repaso para que estudies menos y recuerdes más."
+    },
+    {
+     "q": "¿Es una suscripción?",
+     "a": "No. Pagas una vez y mantienes el acceso. No se renueva."
+    },
+    {
+     "q": "¿Puedo estudiar en español?",
+     "a": "Sí. Cada pregunta y respuesta está en inglés y en español. Tu entrevista es en inglés, así que practica en los dos."
+    }
+   ]
+  }
+ },
+ "questions": [
+  {
+   "id": "demo-1",
+   "section": "Principles of American Government",
+   "section_es": "Principios del gobierno estadounidense",
+   "q": "What is the supreme law of the land?",
+   "q_es": "¿Cuál es la ley suprema de la nación?",
+   "answers": [
+    "The Constitution"
+   ],
+   "answers_es": [
+    "La Constitución"
+   ],
+   "star": true,
+   "changes": false
+  },
+  {
+   "id": "demo-2",
+   "section": "Principles of American Government",
+   "section_es": "Principios del gobierno estadounidense",
+   "q": "What do we call the first ten amendments to the Constitution?",
+   "q_es": "¿Cómo se llaman las primeras diez enmiendas a la Constitución?",
+   "answers": [
+    "The Bill of Rights"
+   ],
+   "answers_es": [
+    "La Carta de Derechos"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-3",
+   "section": "Principles of American Government",
+   "section_es": "Principios del gobierno estadounidense",
+   "q": "How many amendments does the Constitution have?",
+   "q_es": "¿Cuántas enmiendas tiene la Constitución?",
+   "answers": [
+    "Twenty-seven (27)"
+   ],
+   "answers_es": [
+    "Veintisiete (27)"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-4",
+   "section": "System of Government",
+   "section_es": "Sistema de gobierno",
+   "q": "How many U.S. Senators are there?",
+   "q_es": "¿Cuántos senadores federales hay?",
+   "answers": [
+    "One hundred (100)"
+   ],
+   "answers_es": [
+    "Cien (100)"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-5",
+   "section": "System of Government",
+   "section_es": "Sistema de gobierno",
+   "q": "We elect a U.S. Senator for how many years?",
+   "q_es": "¿Por cuántos años elegimos a un senador federal?",
+   "answers": [
+    "Six (6)"
+   ],
+   "answers_es": [
+    "Seis (6)"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-6",
+   "section": "System of Government",
+   "section_es": "Sistema de gobierno",
+   "q": "We elect a President for how many years?",
+   "q_es": "¿Por cuántos años elegimos a un presidente?",
+   "answers": [
+    "Four (4)"
+   ],
+   "answers_es": [
+    "Cuatro (4)"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-7",
+   "section": "System of Government",
+   "section_es": "Sistema de gobierno",
+   "q": "Who is the Commander in Chief of the U.S. military?",
+   "q_es": "¿Quién es el Comandante en Jefe de las Fuerzas Armadas?",
+   "answers": [
+    "The President"
+   ],
+   "answers_es": [
+    "El Presidente"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-8",
+   "section": "System of Government",
+   "section_es": "Sistema de gobierno",
+   "q": "How many justices are on the Supreme Court?",
+   "q_es": "¿Cuántos jueces hay en la Corte Suprema?",
+   "answers": [
+    "Nine (9)"
+   ],
+   "answers_es": [
+    "Nueve (9)"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-9",
+   "section": "American History",
+   "section_es": "Historia de Estados Unidos",
+   "q": "When was the Declaration of Independence adopted?",
+   "q_es": "¿Cuándo se adoptó la Declaración de Independencia?",
+   "answers": [
+    "July 4, 1776"
+   ],
+   "answers_es": [
+    "El 4 de julio de 1776"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-10",
+   "section": "American History",
+   "section_es": "Historia de Estados Unidos",
+   "q": "Who was the first President?",
+   "q_es": "¿Quién fue el primer presidente?",
+   "answers": [
+    "George Washington"
+   ],
+   "answers_es": [
+    "George Washington"
+   ],
+   "star": true,
+   "changes": false
+  },
+  {
+   "id": "demo-11",
+   "section": "American History",
+   "section_es": "Historia de Estados Unidos",
+   "q": "Who was President during the Civil War?",
+   "q_es": "¿Quién era presidente durante la Guerra Civil?",
+   "answers": [
+    "Abraham Lincoln"
+   ],
+   "answers_es": [
+    "Abraham Lincoln"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-12",
+   "section": "Symbols and Holidays",
+   "section_es": "Símbolos y días feriados",
+   "q": "What is the capital of the United States?",
+   "q_es": "¿Cuál es la capital de Estados Unidos?",
+   "answers": [
+    "Washington, D.C."
+   ],
+   "answers_es": [
+    "Washington, D.C."
+   ],
+   "star": true,
+   "changes": false
+  },
+  {
+   "id": "demo-13",
+   "section": "Symbols and Holidays",
+   "section_es": "Símbolos y días feriados",
+   "q": "When do we celebrate Independence Day?",
+   "q_es": "¿Cuándo celebramos el Día de la Independencia?",
+   "answers": [
+    "July 4"
+   ],
+   "answers_es": [
+    "El 4 de julio"
+   ],
+   "star": false,
+   "changes": false
+  },
+  {
+   "id": "demo-14",
+   "section": "Symbols and Holidays",
+   "section_es": "Símbolos y días feriados",
+   "q": "Why does the flag have 50 stars?",
+   "q_es": "¿Por qué hay 50 estrellas en la bandera?",
+   "answers": [
+    "Because there are 50 states",
+    "One for each state"
+   ],
+   "answers_es": [
+    "Porque hay 50 estados",
+    "Una por cada estado"
+   ],
+   "star": true,
+   "changes": false
+  }
+ ]
+}

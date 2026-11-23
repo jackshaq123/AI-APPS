@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card narrow legal">
+{% if page == 'terms' %}
+  <h1>Terms</h1>
+  <p>{{ cfg.BRAND_NAME }} sells study material for exams. It is a private service and is not affiliated with or endorsed by any government agency or exam provider. Official study material is free from the agency that gives each exam.</p>
+  <p>Buying an exam gives you access to that exam's study material for as long as we run the service. It is one payment. There is no subscription and nothing renews.</p>
+  <p>We work to keep every question and answer accurate and current, but official exams change. Always check the official source before your exam. We do not promise you will pass.</p>
+  <p>Access is for you alone. Do not share your login or copy the material.</p>
+  <p>Questions: <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>.</p>
+{% elif page == 'privacy' %}
+  <h1>Privacy</h1>
+  <p>We collect your email address, your answers to practice questions, and which ad or link brought you here. We use them to run your account, show your progress, and email you about your exam.</p>
+  <p>Payments are handled by Stripe. We never see or store your card number.</p>
+  <p>If our ads are running, our pages use the Meta Pixel to measure them. Meta may set cookies for this.</p>
+  <p>We do not sell your information. To delete your account and data, email <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>.</p>
+{% else %}
+  <h1>Refunds</h1>
+  <p>If you are not happy, email <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a> within 30 days of buying and we refund the full amount. No questions asked. Refunds go back to the card you paid with and usually take 5 to 10 business days to show up.</p>
+{% endif %}
+</section>
+{% endblock %}
