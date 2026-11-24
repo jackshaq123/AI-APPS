@@ -1,0 +1,69 @@
+[hidden] { display: none !important; }
+:root {
+  --ink: #102A43; --body: #334E68; --quiet: #627D98; --line: #D9E2EC;
+  --bg: #F5F7FA; --card: #FFFFFF; --brand: #1F6FEB; --brand-ink: #FFFFFF;
+  --ok: #0E7C4A; --bad: #B42318; --note: #8A5A00; --note-bg: #FFF6E0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #F0F4F8; --body: #D9E2EC; --quiet: #9FB3C8; --line: #334E68;
+    --bg: #0B1726; --card: #13233A; --brand: #5B9BFF; --brand-ink: #0B1726;
+    --ok: #5FD39B; --bad: #FF8A80; --note: #FFD27A; --note-bg: #2A2110;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--body);
+  font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+a { color: var(--brand); }
+h1, h2 { color: var(--ink); line-height: 1.25; }
+h1 { font-size: 2rem; margin: 0 0 .5rem; }
+h2 { font-size: 1.3rem; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 18px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.top { background: var(--card); border-bottom: 1px solid var(--line); }
+.top .row { justify-content: space-between; min-height: 56px; }
+.brand { font-weight: 800; font-size: 1.15rem; color: var(--ink); text-decoration: none; }
+nav a, .link { margin-left: 14px; font-size: .95rem; }
+.inline { display: inline; }
+.link { background: none; border: 0; color: var(--brand); cursor: pointer; font-family: inherit; font-size: .95rem; padding: 0; text-decoration: underline; }
+.demo { background: var(--note-bg); color: var(--note); text-align: center; padding: 8px 12px; font-size: .9rem; }
+.hero { padding: 40px 0 16px; }
+.sub { font-size: 1.15rem; }
+.quiet { color: var(--quiet); font-size: .92rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin: 18px 0; }
+.narrow { max-width: 480px; margin: 40px auto; }
+.btn { display: inline-block; background: var(--brand); color: var(--brand-ink); border: 0; border-radius: 10px;
+  padding: 14px 22px; font-family: inherit; font-size: 1rem; font-weight: 700; line-height: 1.2; text-decoration: none; cursor: pointer; }
+.btn.small { padding: 8px 14px; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
+input[type=email] { flex: 1; min-width: 220px; padding: 13px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg); color: var(--ink); font: inherit; }
+label { display: block; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.steps li, .checks li { margin: 6px 0; }
+.checks { list-style: none; padding: 0; }
+.checks li::before { content: "✓ "; color: var(--ok); font-weight: 700; }
+.price { font-size: 1.2rem; font-weight: 700; color: var(--ink); }
+.options { display: grid; gap: 10px; margin: 14px 0; }
+.option { text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg);
+  color: var(--ink); font: inherit; cursor: pointer; }
+.option:hover:not(:disabled) { border-color: var(--brand); }
+.option.right { border-color: var(--ok); outline: 2px solid var(--ok); }
+.option.wrong { border-color: var(--bad); outline: 2px solid var(--bad); }
+.ok { color: var(--ok); font-weight: 700; }
+.bad { color: var(--bad); font-weight: 700; }
+.note { background: var(--note-bg); color: var(--note); padding: 8px 12px; border-radius: 8px; font-size: .9rem; }
+.q { color: var(--ink); font-weight: 600; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 20px 0 0; }
+.tabs a { margin: 0; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); background: var(--card); }
+.tabs a.on { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.section { margin-top: 28px; }
+.flash { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+.flash.done-ok { border-left: 4px solid var(--ok); }
+.flash.done-bad { border-left: 4px solid var(--bad); }
+.star { color: var(--note); }
+details { border-bottom: 1px solid var(--line); padding: 10px 0; }
+summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.foot { padding: 30px 18px 40px; font-size: .85rem; color: var(--quiet); }
+.foot a { color: var(--quiet); }
+@media (max-width: 480px) { h1 { font-size: 1.6rem; } .card { padding: 16px; } }
+.en { margin-top: -4px; font-style: italic; }

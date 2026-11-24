@@ -1,0 +1,7 @@
+<nav class="tabs">
+  <a href="{{ url_for('study', slug=pack.slug) }}" {% if request.endpoint == 'study' %}class="on"{% endif %}>{{ t('flashcards') }}</a>
+  <a href="{{ url_for('practice', slug=pack.slug) }}" {% if mode == 'practice' %}class="on"{% endif %}>{{ t('practice') }}</a>
+  <a href="{{ url_for('mock', slug=pack.slug) }}" {% if mode == 'mock' %}class="on"{% endif %}>{{ t('mock') }}</a>
+  {% if pack.mock_65_20 %}<a href="{{ url_for('mock', slug=pack.slug, mode='65') }}" {% if mode == 'mock65' %}class="on"{% endif %}>{{ t('mock_65') }}</a>{% endif %}
+  <a href="{{ url_for('practice', slug=pack.slug, weak='1') }}" {% if mode == 'weak' %}class="on"{% endif %}>{{ t('weak') }}</a>
+</nav>

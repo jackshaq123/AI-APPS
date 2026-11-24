@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ pack.title }} · {{ cfg.BRAND_NAME }}{% endblock %}
+{% block body %}
+{% if mode != 'free' %}{% include "_paidnav.html" %}{% endif %}
+<section id="quiz" class="card"
+  data-mode="{{ mode }}" data-slug="{{ pack.slug }}"
+  data-pass-mark="{{ pass_mark or '' }}">
+  {% if not questions %}<p>{{ t('no_weak') }}</p>{% endif %}
+</section>
+
+{% if mode == 'free' %}
+<section id="after-free" class="card" hidden>
+  <h2 data-score></h2>
+  <form id="lead-form">
+    <label for="email">{{ t('email_prompt') }}</label>
+    <div class="row">
+      <input id="email" type="email" name="email" required autocomplete="email" placeholder="{{ t('email_placeholder') }}">
+      <button class="btn">{{ t('email_button') }}</button>
+    </div>
+    <p class="quiet">{{ t('email_fine_print') }}</p>
+  </form>
+  <div id="upsell" hidden>
+    <p>{{ t('saved') }}</p>
+    <form method="post" action="{{ url_for('checkout', slug=pack.slug) }}" data-checkout>
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <button class="btn">{{ t('unlock', price=price) }}</button>
+    </form>
+    <p class="quiet">{{ t('refund_line', days=pack.refund_days or 30) }}</p>
+  </div>
+</section>
+{% endif %}
+
+<section id="review" hidden></section>
+
+<script type="application/json" id="quiz-data">{{ questions|tojson }}</script>
+<script type="application/json" id="quiz-text">{{ {
+  'question_of': t('question_of', i='{i}', n='{n}'),
+  'next': t('next'), 'finish': t('finish'),
+  'correct': t('correct'), 'wrong': t('wrong'), 'accepted': t('accepted'),
+  'your_score': t('your_score', score='{score}', n='{n}'),
+  'passed': t('passed', score='{score}', n='{n}', pass_mark='{pass_mark}'),
+  'failed': t('failed', score='{score}', n='{n}', pass_mark='{pass_mark}'),
+  'try_again': t('try_again'), 'change_note': t('change_note'), 'in_english': t('in_english'),
+}|tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

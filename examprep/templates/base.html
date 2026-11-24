@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ cfg.BRAND_NAME }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{% endblock %}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta name="csrf-token" content="{{ csrf_token }}">
+{% if cfg.META_PIXEL_ID %}
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '{{ cfg.META_PIXEL_ID }}');
+fbq('track', 'PageView');
+</script>
+{% endif %}
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="top">
+  <div class="wrap row">
+    <a class="brand" href="{{ url_for('home') }}">{{ cfg.BRAND_NAME }}</a>
+    <nav>
+      <a href="{{ request.path }}?{{ {'lang': other_lang}|qs }}">{{ t('other_lang') }}</a>
+      {% if user %}
+        <a href="{{ url_for('account') }}">{{ t('account') }}</a>
+        <form method="post" action="{{ url_for('logout') }}" class="inline">
+          <input type="hidden" name="csrf" value="{{ csrf_token }}">
+          <button class="link">{{ t('logout') }}</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}">{{ t('login') }}</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+{% if pack and pack.demo %}<div class="demo">{{ t('demo_banner') }}</div>{% endif %}
+<main class="wrap">
+{% block body %}{% endblock %}
+</main>
+<footer class="foot wrap">
+  <p>{{ t('not_affiliated', brand=cfg.BRAND_NAME) }}</p>
+  <p>
+    <a href="{{ url_for('terms') }}">{{ t('terms') }}</a> ·
+    <a href="{{ url_for('privacy') }}">{{ t('privacy') }}</a> ·
+    <a href="{{ url_for('refunds') }}">{{ t('refunds') }}</a> ·
+    <a href="mailto:{{ cfg.SUPPORT_EMAIL }}">{{ cfg.SUPPORT_EMAIL }}</a>
+  </p>
+  {% if cfg.BUSINESS_ADDRESS %}<p>{{ cfg.BRAND_NAME }}, {{ cfg.BUSINESS_ADDRESS }}</p>{% endif %}
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>
