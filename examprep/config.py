@@ -27,6 +27,9 @@ class Config:
 
     STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
     STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    # Shown after the account name on card statements, so buyers recognize the
+    # charge when this shares a Stripe account with another business.
+    STATEMENT_DESCRIPTOR_SUFFIX = os.environ.get("STATEMENT_DESCRIPTOR_SUFFIX", "")
 
     SMTP_HOST = os.environ.get("SMTP_HOST", "")
     SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))

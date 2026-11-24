@@ -224,6 +224,9 @@ def create_app(overrides=None):
         )
         if email:
             params["customer_email"] = email
+        suffix = app.config.get("STATEMENT_DESCRIPTOR_SUFFIX", "")[:22]
+        if suffix:
+            params["payment_intent_data"] = {"statement_descriptor_suffix": suffix}
         checkout_session = stripe.checkout.Session.create(**params)
         return redirect(checkout_session.url, code=303)
 

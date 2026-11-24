@@ -185,3 +185,23 @@ def test_pack_matches_official_pdf_word_for_word():
         if q["id"] not in current:
             for a in q["answers"]:
                 assert norm(a) in official, (q["id"], a)
+
+
+def test_checkout_sends_statement_suffix(tmp_path, monkeypatch):
+    sent = {}
+
+    class FakeSession:
+        @staticmethod
+        def create(**params):
+            sent.update(params)
+            return type("S", (), {"url": "https://checkout.stripe.test/x"})()
+
+    import stripe
+    monkeypatch.setattr(stripe.checkout, "Session", FakeSession)
+    app = create_app({"TESTING": True, "DATABASE_URL": f"sqlite:///{tmp_path/'s.db'}",
+                      "STRIPE_SECRET_KEY": "sk_test_dummy", "STATEMENT_DESCRIPTOR_SUFFIX": "PASSPREP"})
+    client = app.test_client()
+    r = client.post(f"/exam/{SLUG}/checkout", data={"csrf": csrf(client)})
+    assert r.status_code == 303 and r.headers["Location"] == "https://checkout.stripe.test/x"
+    assert sent["payment_intent_data"] == {"statement_descriptor_suffix": "PASSPREP"}
+    assert sent["line_items"][0]["price_data"]["unit_amount"] == 2900
