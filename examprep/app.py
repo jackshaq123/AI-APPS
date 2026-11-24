@@ -286,7 +286,7 @@ def create_app(overrides=None):
     @require_access
     def study(pack):
         return render_template("study.html", pack=pack,
-                               questions=exams.all_questions(pack, g.lang))
+                               questions=exams.study_cards(pack, g.lang))
 
     @app.get("/exam/<slug>/practice")
     @require_access

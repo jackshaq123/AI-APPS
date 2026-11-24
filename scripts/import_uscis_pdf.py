@@ -1,7 +1,8 @@
 """Turn the official USCIS civics test PDF into an exam pack.
 
 Usage:
-    python scripts/import_uscis_pdf.py questions-en.pdf [--es questions-es.pdf] \
+    python scripts/import_uscis_pdf.py 2025-Civics-Test-128-Questions-and-Answers.pdf \
+        [--extra content/sources/us-citizenship-2025.extra.json] \
         [--base content/us-citizenship-2025.json] [--out content/us-citizenship-2025.json]
 
 The USCIS lists are numbered questions ("12. What is ...?") each followed by
@@ -37,34 +38,56 @@ def pdf_lines(path):
     return lines
 
 
+SUBSECTION = re.compile(r"^[A-Z]:\s+\S")
+
+
+def _is_category(line):
+    letters = [c for c in line if c.isalpha()]
+    return len(letters) >= 4 and all(c.isupper() for c in letters)
+
+
 def parse_lines(lines):
-    """Return a list of {n, section, q, answers, star, changes}."""
-    out, section, current = [], "", None
-    pending_heading = []
+    """Return a list of {n, section, q, answers, star, changes, note}.
+
+    Section names combine the ALL-CAPS category and the "A: ..." heading,
+    e.g. "American Government: Principles of American Government". Text
+    between the last answer of a question and the next heading is kept as
+    that question's note. Anything before the first heading is ignored.
+    """
+    out, category, section, current = [], "", "", None
     for line in lines:
         qm = QUESTION.match(line)
         if qm:
             if current:
                 out.append(current)
-            if pending_heading:
-                section = " ".join(pending_heading).strip(" :")
-                pending_heading = []
             text = qm.group(2).strip()
-            star = text.startswith("*") or text.endswith("*") or line.lstrip().startswith("*")
+            star = text.endswith("*") or text.startswith("*")
             current = {"n": int(qm.group(1)), "section": section, "q": text.strip("* ").strip(),
-                       "answers": [], "star": star, "changes": False}
+                       "answers": [], "star": star, "changes": False, "note": ""}
             continue
+        if _is_category(line):
+            category = line.title().replace(" And ", " and ")
+            continue
+        if SUBSECTION.match(line):
+            name = line[2:].strip()
+            section = f"{category}: {name}" if category else name
+            continue
+        if current is None:
+            continue  # introduction text
         if BULLET.match(line):
-            if current is not None:
-                current["answers"].append(BULLET.sub("", line).strip())
-            continue
-        if current is not None and not current["answers"] and not current["q"].endswith("?"):
-            current["q"] += " " + line  # question wrapped onto the next line
-            continue
-        if current is not None and current["answers"] and line[:1].islower():
+            current["answers"].append(BULLET.sub("", line).strip())
+        elif not current["answers"]:
+            if line.strip() == "*":
+                current["star"] = True
+            else:
+                current["q"] = (current["q"] + " " + line).strip()  # question wrapped
+                if current["q"].endswith("*"):
+                    current["star"] = True
+                    current["q"] = current["q"].rstrip("* ").strip()
+        elif current["note"] or line[:1].isupper():
+            current["note"] = (current["note"] + " " + line).strip()  # note under the answers
+        else:
             current["answers"][-1] += " " + line  # answer wrapped onto the next line
-            continue
-        pending_heading.append(line)  # anything else between questions is a heading
     if current:
         out.append(current)
     for q in out:
@@ -84,40 +107,86 @@ def check(parsed, label):
     return problems
 
 
-def build_pack(base, en, es=None):
+FREE_QUIZ = ["q2", "q7", "q16", "q21", "q36", "q53", "q78", "q94", "q119", "q122"]
+
+
+def check_extra(en, extra):
+    """Every quizzable question needs a Spanish version and 3 wrong options per language."""
+    problems = []
+    qx = extra.get("questions", {})
+    for q in en:
+        x = qx.get(str(q["n"]))
+        if not x:
+            problems.append(f"extra: question {q['n']} missing")
+            continue
+        if not x.get("q_es"):
+            problems.append(f"extra: question {q['n']} has no q_es")
+        if not x.get("current") and len(x.get("a_es", [])) != len(q["answers"]):
+            problems.append(f"extra: question {q['n']} has {len(x.get('a_es', []))} Spanish answers, "
+                            f"USCIS lists {len(q['answers'])}")
+        if not x.get("personal") and (len(x.get("d", [])) != 3 or len(x.get("d_es", [])) != 3):
+            problems.append(f"extra: question {q['n']} needs 3 wrong options in English and Spanish")
+        if x.get("current") and not q["changes"]:
+            problems.append(f"extra: question {q['n']} has current answers but USCIS does not mark it as changing")
+    return problems
+
+
+def build_pack(base, en, extra=None):
     pack = {k: v for k, v in base.items() if k not in {"questions", "demo", "source_note"}}
-    es_by_n = {q["n"]: q for q in (es or [])}
+    extra = extra or {}
+    qx = extra.get("questions", {})
+    sections_es = extra.get("sections_es", {})
+    checked = extra.get("current_checked", "")
     questions = []
     for q in en:
-        item = {"id": f"q{q['n']}", "section": q["section"], "q": q["q"], "answers": q["answers"],
-                "star": q["star"], "changes": q["changes"]}
-        other = es_by_n.get(q["n"])
-        if other:
-            item.update(section_es=other["section"], q_es=other["q"], answers_es=other["answers"])
+        item = {"id": f"q{q['n']}", "number": q["n"], "section": q["section"], "q": q["q"],
+                "answers": q["answers"], "star": q["star"], "changes": q["changes"]}
+        if q.get("note"):
+            item["note"] = q["note"]
+        x = qx.get(str(q["n"]), {})
+        if x.get("current"):
+            item["answers"] = x["current"]
+            item["answers_es"] = x.get("current_es", x["current"])
+            item["note"] = f"USCIS: {q['answers'][0]} Current answer checked {checked}."
+            item["note_es"] = f"USCIS: visite uscis.gov/citizenship/testupdates. Respuesta actual verificada el {checked}."
+        elif x.get("a_es"):
+            item["answers_es"] = x["a_es"]
+        if q["section"] in sections_es:
+            item["section_es"] = sections_es[q["section"]]
+        for src, dst in (("q_es", "q_es"), ("note_es", "note_es"), ("d", "distractors"),
+                         ("d_es", "distractors_es"), ("pick", "pick"), ("personal", "personal"),
+                         ("lookup", "lookup")):
+            if x.get(src) and dst not in item:
+                item[dst] = x[src]
         questions.append(item)
     pack["questions"] = questions
-    pack["languages"] = ["en", "es"] if es else ["en"]
+    pack["languages"] = ["en", "es"] if qx else ["en"]
+    pack["free_ids"] = [i for i in FREE_QUIZ if any(q["id"] == i for q in questions)]
+    pack["source"] = {"list": "USCIS M-1778 (09/25), 128 Civics Questions and Answers (2025 version)",
+                      "current_answers_checked": checked,
+                      "spanish": "Unofficial translation. USCIS does not publish a Spanish 2025 list."}
     return pack
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("pdf")
-    ap.add_argument("--es", help="Spanish edition of the same list")
+    ap.add_argument("--extra", default="content/sources/us-citizenship-2025.extra.json",
+                    help="Spanish, wrong options and current answers, keyed by question number")
     ap.add_argument("--base", default="content/us-citizenship-2025.json")
     ap.add_argument("--out", default="content/us-citizenship-2025.json")
     args = ap.parse_args(argv)
 
     en = parse_lines(pdf_lines(args.pdf))
-    es = parse_lines(pdf_lines(args.es)) if args.es else None
     problems = check(en, "English")
-    if es is not None:
-        problems += check(es, "Spanish")
-        if len(es) != len(en):
-            problems.append(f"English has {len(en)} questions, Spanish has {len(es)}")
+    extra = None
+    if args.extra:
+        with open(args.extra, encoding="utf-8") as fh:
+            extra = json.load(fh)
+        problems += check_extra(en, extra)
     with open(args.base, encoding="utf-8") as fh:
         base = json.load(fh)
-    pack = build_pack(base, en, es)
+    pack = build_pack(base, en, extra)
 
     print(f"Questions: {len(en)}  65/20 (starred): {sum(q['star'] for q in en)}  "
           f"answers that change: {[q['n'] for q in en if q['changes']]}")

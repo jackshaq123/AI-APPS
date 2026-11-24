@@ -2,15 +2,19 @@
 {% block title %}{{ t('flashcards') }} · {{ pack.title }}{% endblock %}
 {% block body %}
 {% include "_paidnav.html" %}
+{% if lang != 'en' and t('translation_note') %}<p class="note">{{ t('translation_note') }}</p>{% endif %}
 <section id="cards" data-slug="{{ pack.slug }}">
   {% set ns = namespace(section=None) %}
   {% for q in questions %}
     {% if q.section != ns.section %}<h2 class="section">{{ q.section }}</h2>{% set ns.section = q.section %}{% endif %}
     <article class="flash" data-qid="{{ q.id }}">
       <p class="q">{{ loop.index }}. {{ q.q }}{% if q.star %} <span class="star" title="65/20">★</span>{% endif %}</p>
+      {% if q.q_en %}<p class="quiet en">{{ t('in_english') }}: {{ q.q_en }}</p>{% endif %}
       <div class="a" hidden>
         <ul>{% for a in q.answers %}<li>{{ a }}</li>{% endfor %}</ul>
-        {% if q.changes %}<p class="note">{{ t('change_note') }}</p>{% endif %}
+        {% if q.answers_en and q.answers_en != q.answers %}<p class="quiet en">{{ t('in_english') }}: {{ q.answers_en|join(' · ') }}</p>{% endif %}
+        {% if q.personal %}<p class="note">{{ t('personal_note') }} <a href="{{ q.lookup }}" target="_blank" rel="noopener">{{ t('lookup') }}</a></p>{% endif %}
+        {% if q.changes and not q.personal %}<p class="note">{{ t('change_note') }}</p>{% endif %}
         {% if q.note %}<p class="note">{{ q.note }}</p>{% endif %}
         <div class="row">
           <button class="btn small" data-mark="1">{{ t('got_it') }}</button>

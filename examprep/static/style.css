@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   --ink: #102A43; --body: #334E68; --quiet: #627D98; --line: #D9E2EC;
   --bg: #F5F7FA; --card: #FFFFFF; --brand: #1F6FEB; --brand-ink: #FFFFFF;
@@ -65,3 +66,4 @@ summary { cursor: pointer; font-weight: 600; color: var(--ink); }
 .foot { padding: 30px 18px 40px; font-size: .85rem; color: var(--quiet); }
 .foot a { color: var(--quiet); }
 @media (max-width: 480px) { h1 { font-size: 1.6rem; } .card { padding: 16px; } }
+.en { margin-top: -4px; font-style: italic; }

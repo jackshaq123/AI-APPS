@@ -15,24 +15,27 @@ Every exam follows the same funnel, built for cold Facebook and Instagram (Zeely
    - a "questions I miss" review list
 6. **Login later** with an emailed link. There are no passwords.
 
-The first exam is the **U.S. citizenship civics test** (`content/us-citizenship-2025.json`).
-**It currently holds 14 demo questions only.** A yellow banner says so on every page.
+The first exam is the **U.S. citizenship civics test** (`content/us-citizenship-2025.json`). It contains:
 
-## Before launch (must do)
+- **All 128 official questions and answers** from the USCIS 2025 list (M-1778, 09/25). A test checks every question and answer word for word against that PDF.
+- **Three hand-written wrong options per question** for multiple choice, in English and Spanish.
+- **A Spanish translation** (our own; USCIS publishes no Spanish 2025 list). In Spanish mode the English wording also shows, because the interview is in English.
+- **Current officials** (questions 30, 38, 39, 57) from uscis.gov/citizenship/testupdates, checked 2026-11-24.
+- **Four state-specific questions** (23, 29, 61, 62): flashcards only, with a link to look up your own answer.
+- **The official rules:** a 20-question mock with 12 to pass, and a 65/20 mock of 10 starred questions with 6 to pass.
 
-1. **Load the official questions.**
-   - Download the USCIS 2025 civics test "128 Questions and Answers" PDF. If you want Spanish, download the Spanish edition too.
-   - Run:
-     ```
-     pip install -r requirements.txt
-     python scripts/import_uscis_pdf.py civics-en.pdf --es civics-es.pdf
-     ```
-   - The script prints the question count, the starred (65/20) count, and the questions whose answers change. It refuses to write if the numbering has gaps.
-   - Spot-check several questions against the PDF.
-2. **Check the test rules** in the pack against what USCIS publishes today:
-   - `mock.size` / `mock.pass_mark` (now 20 / 12)
-   - `mock_65_20` (now 10 / 6)
-3. Set `SHOW_DEMO_PACKS=false` in production.
+## Keeping the questions current
+
+- **When an official changes** (election, new Speaker or Chief Justice):
+  1. Check uscis.gov/citizenship/testupdates.
+  2. Edit `current` / `current_es` and `current_checked` in `content/sources/us-citizenship-2025.extra.json`.
+  3. Re-run the importer.
+- **When USCIS publishes a new edition of the list:** download the new PDF to `content/sources/`, then run:
+  ```
+  python scripts/import_uscis_pdf.py content/sources/2025-Civics-Test-128-Questions-and-Answers.pdf
+  ```
+  The importer refuses to write if numbering has gaps, or if any question is missing Spanish or its 3 wrong options.
+- **uscis.gov blocks plain downloads from cloud servers.** Use a browser to download.
 
 ## Run locally
 

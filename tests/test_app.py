@@ -40,7 +40,7 @@ def test_landing_and_free_quiz(client):
     qs = json.loads(data)
     assert len(qs) == 10
     for q in qs:
-        assert len(q["options"]) == 4 and q["options"][q["correct_index"]] == q["answers"][0]
+        assert len(q["options"]) == 4 and q["options"][q["correct_index"]] in [exams.clean_option(a) for a in q["answers"]]
 
 
 def test_spanish(client):
@@ -68,11 +68,11 @@ def test_lead_then_fake_checkout_unlocks(client):
     assert client.get(f"/exam/{SLUG}/study").status_code == 200
     assert client.get(f"/exam/{SLUG}/mock").status_code == 200
     token = csrf(client, f"/exam/{SLUG}/study")
-    r = client.post(f"/api/{SLUG}/progress", json={"question_id": "demo-1", "correct": False},
+    r = client.post(f"/api/{SLUG}/progress", json={"question_id": "q1", "correct": False},
                     headers={"X-CSRF-Token": token})
     assert r.get_json() == {"ok": True}
     r = client.get(f"/exam/{SLUG}/practice?weak=1")
-    assert '"demo-1"' in r.get_data(as_text=True)
+    assert '"q1"' in r.get_data(as_text=True)
 
 
 def test_bad_email_rejected(client):
@@ -109,10 +109,79 @@ def test_importer_parses_uscis_layout():
     assert parsed[0]["q"] == "What is the form of government of the United States?"
     assert parsed[0]["answers"] == ["Republic", "Constitution-based federal republic"]
     assert parsed[1]["star"] and not parsed[0]["star"]
-    assert parsed[2]["changes"] and parsed[2]["section"] == "B: System of Government"
+    assert parsed[2]["changes"] and parsed[2]["section"] == "American Government: System of Government"
     assert not check(parsed, "en")
     base = {"slug": "s", "title": "t", "price_cents": 1, "currency": "usd", "mock": {"size": 2, "pass_mark": 1},
             "questions": [], "demo": True, "free_count": 3}
     pack = build_pack(base, parsed)
     assert "demo" not in pack and len(pack["questions"]) == 3
     exams.validate_pack(pack)
+
+
+def _real_pack():
+    import os
+    return exams.load_packs(os.path.join(os.path.dirname(__file__), "..", "content"))[SLUG]
+
+
+def test_real_pack_is_complete():
+    pack = _real_pack()
+    assert not pack.get("demo")
+    assert len(pack["questions"]) == 128
+    assert sum(q["star"] for q in pack["questions"]) == 20
+    assert {q["id"] for q in pack["questions"] if q.get("personal")} == {"q23", "q29", "q61", "q62"}
+    assert pack["mock"] == {"size": 20, "pass_mark": 12}
+    assert pack["mock_65_20"] == {"size": 10, "pass_mark": 6}
+
+
+@pytest.mark.parametrize("lang", ["en", "es"])
+def test_every_choice_is_sound(lang):
+    pack = _real_pack()
+    for seed in range(5):
+        for item in exams.all_questions(pack, lang, seed=seed):
+            opts = item["options"]
+            assert len(opts) == 4 and len(set(opts)) == 4, item["id"]
+            correct = opts[item["correct_index"]]
+            accepted = {exams.clean_option(a).lower() for a in item["answers"]}
+            for i, o in enumerate(opts):
+                if i != item["correct_index"]:
+                    assert o.lower() not in accepted, (item["id"], o)
+            if item["pick"] > 1:
+                assert len(correct.split(", ")) >= item["pick"], item["id"]
+            assert "[" not in correct, item["id"]
+            if lang == "es":
+                assert item["q_en"] and item["answers_en"]
+
+
+def test_personal_questions_are_flashcards_only():
+    pack = _real_pack()
+    quiz_ids = {q["id"] for q in exams.all_questions(pack, "en", seed=1)}
+    assert not quiz_ids & {"q23", "q29", "q61", "q62"}
+    cards = {c["id"]: c for c in exams.study_cards(pack, "en")}
+    assert cards["q23"]["lookup"].startswith("https://")
+    mock = exams.mock_test(pack, "en", seed=3, star_only=True)
+    assert mock["size"] == 10 and mock["pass_mark"] == 6
+    assert all(q["star"] for q in mock["questions"])
+
+
+def test_free_quiz_uses_chosen_questions():
+    pack = _real_pack()
+    ids = [q["id"] for q in exams.free_questions(pack, "en")]
+    assert ids == pack["free_ids"] and len(ids) == 10
+
+
+def test_pack_matches_official_pdf_word_for_word():
+    import os
+    pdfplumber = pytest.importorskip("pdfplumber")
+    path = os.path.join(os.path.dirname(__file__), "..", "content", "sources",
+                        "2025-Civics-Test-128-Questions-and-Answers.pdf")
+    with pdfplumber.open(path) as pdf:
+        text = " ".join((p.extract_text() or "") for p in pdf.pages)
+    norm = lambda s: re.sub(r"\s+", " ", s).strip()  # noqa: E731
+    official = norm(text)
+    pack = _real_pack()
+    current = {"q30", "q38", "q39", "q57"}  # answers come from the USCIS test-updates page
+    for q in pack["questions"]:
+        assert norm(q["q"]) in official, q["id"]
+        if q["id"] not in current:
+            for a in q["answers"]:
+                assert norm(a) in official, (q["id"], a)

@@ -56,6 +56,10 @@ STRINGS = {
         "refunds": "Refunds",
         "demo_banner": "Demo content. These questions are placeholders and have not been checked against the official list.",
         "no_weak": "Nothing here yet. Questions you miss in practice show up here.",
+        "in_english": "In English",
+        "lookup": "Find your answer",
+        "personal_note": "Your answer depends on where you live. Look it up and say it out loud until you know it.",
+        "translation_note": "",
     },
     "es": {
         "lang_name": "Español",
@@ -112,6 +116,10 @@ STRINGS = {
         "refunds": "Reembolsos",
         "demo_banner": "Contenido de demostración. Estas preguntas son de ejemplo y no se han verificado con la lista oficial.",
         "no_weak": "Todavía no hay nada. Aquí aparecen las preguntas que fallas en la práctica.",
+        "in_english": "En inglés",
+        "lookup": "Busca tu respuesta",
+        "personal_note": "Tu respuesta depende de dónde vives. Búscala y dila en voz alta hasta que la sepas.",
+        "translation_note": "La traducción al español es nuestra; USCIS no publica la lista de 2025 en español. La entrevista es en inglés (salvo la excepción 65/20), así que practica también en inglés.",
     },
 }
 

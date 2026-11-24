@@ -50,6 +50,7 @@
       var q = questions[i];
       root.appendChild(el("p", { class: "quiet" }, fill(text.question_of, { i: i + 1, n: questions.length })));
       root.appendChild(el("h2", { class: "q" }, q.q));
+      if (q.q_en) root.appendChild(el("p", { class: "quiet en" }, text.in_english + ": " + q.q_en));
       var list = el("div", { class: "options" });
       q.options.forEach(function (opt, idx) {
         var b = el("button", { class: "option", type: "button" }, opt);
@@ -96,6 +97,7 @@
         var card = el("article", { class: "card" });
         card.appendChild(el("p", { class: "q" }, q.q));
         card.appendChild(el("p", {}, q.answers.join(" · ")));
+        if (q.answers_en && q.answers_en.join() !== q.answers.join()) card.appendChild(el("p", { class: "quiet en" }, text.in_english + ": " + q.answers_en.join(" · ")));
         review.appendChild(card);
       });
     }
